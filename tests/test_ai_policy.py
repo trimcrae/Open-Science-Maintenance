@@ -30,6 +30,19 @@ def test_classify_none_when_no_ai_terms():
     assert classify("Please run the tests and follow PEP 8.")[0] == "none"
 
 
+def test_proximity_avoids_false_positive():
+    # A stray "unless" in an unrelated docstring, far from the lone AI mention,
+    # must NOT be read as an AI condition.
+    txt = (
+        "Rescale the image unless False is given. " + ("x " * 400)
+        + "We use copilot autocompletion in our editors."
+    )
+    cat, ev = classify(txt)
+    # The only AI mention ("copilot") has no ban/condition marker nearby.
+    assert cat == "conditional"
+    assert "rescale" not in (ev or "").lower()
+
+
 def _raw(policy):
     return RawSignals(
         monthly_downloads=1_000_000, stars=5000, forks=800,

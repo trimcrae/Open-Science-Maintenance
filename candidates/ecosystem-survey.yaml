@@ -1,0 +1,51 @@
+# Broad survey of widely-used scientific / numerical Python projects, for the
+# AI-contribution-policy ecosystem report. The scanner ranks and (more
+# importantly here) classifies each project's stance on AI-generated PRs.
+candidates:
+  # --- Core numerics & data ---
+  - {github: numpy/numpy, pypi: numpy, domain: core}
+  - {github: scipy/scipy, pypi: scipy, domain: core}
+  - {github: pandas-dev/pandas, pypi: pandas, domain: core}
+  - {github: pydata/xarray, pypi: xarray, domain: core}
+  - {github: dask/dask, pypi: dask, domain: core}
+  - {github: numba/numba, pypi: numba, domain: core}
+  - {github: sympy/sympy, pypi: sympy, domain: core}
+  - {github: hgrecco/pint, pypi: pint, domain: core}
+
+  # --- Visualization ---
+  - {github: matplotlib/matplotlib, pypi: matplotlib, domain: viz}
+  - {github: mwaskom/seaborn, pypi: seaborn, domain: viz}
+  - {github: bokeh/bokeh, pypi: bokeh, domain: viz}
+  - {github: pyvista/pyvista, pypi: pyvista, domain: viz}
+
+  # --- ML & stats ---
+  - {github: scikit-learn/scikit-learn, pypi: scikit-learn, domain: ml}
+  - {github: statsmodels/statsmodels, pypi: statsmodels, domain: ml}
+  - {github: pymc-devs/pymc, pypi: pymc, domain: ml}
+  - {github: dmlc/xgboost, pypi: xgboost, domain: ml}
+
+  # --- Arrays / IO ---
+  - {github: h5py/h5py, pypi: h5py, domain: io}
+  - {github: zarr-developers/zarr-python, pypi: zarr, domain: io}
+
+  # --- Image / graph / signal ---
+  - {github: scikit-image/scikit-image, pypi: scikit-image, domain: image}
+  - {github: networkx/networkx, pypi: networkx, domain: graph}
+  - {github: imageio/imageio, pypi: imageio, domain: image}
+
+  # --- Astronomy ---
+  - {github: astropy/astropy, pypi: astropy, domain: astronomy}
+  - {github: sunpy/sunpy, pypi: sunpy, domain: astronomy}
+  - {github: astropy/astroquery, pypi: astroquery, domain: astronomy}
+  - {github: lightkurve/lightkurve, pypi: lightkurve, domain: astronomy}
+
+  # --- Bio / chem / neuro / geo ---
+  - {github: biopython/biopython, pypi: biopython, domain: bio}
+  - {github: scverse/scanpy, pypi: scanpy, domain: bio}
+  - {github: scverse/anndata, pypi: anndata, domain: bio}
+  - {github: MDAnalysis/mdanalysis, pypi: MDAnalysis, domain: bio}
+  - {github: scikit-bio/scikit-bio, pypi: scikit-bio, domain: bio}
+  - {github: pysam-developers/pysam, pypi: pysam, domain: bio}
+  - {github: nipy/nibabel, pypi: nibabel, domain: neuro}
+  - {github: mne-tools/mne-python, pypi: mne, domain: neuro}
+  - {github: obspy/obspy, pypi: obspy, domain: geo}

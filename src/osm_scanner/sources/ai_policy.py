@@ -43,51 +43,82 @@ def _get_file(http: HttpClient, owner: str, name: str, path: str) -> str | None:
     return None
 
 
-def _evidence(text: str, low: str, markers: list[str]) -> str | None:
+def _ai_windows(low: str, pad: int = 280) -> list[tuple[int, int]]:
+    """Character ranges around every AI-term mention, merged where they overlap."""
+    spans = []
+    for term in config.AI_TERMS:
+        start = 0
+        while (idx := low.find(term, start)) >= 0:
+            spans.append((max(0, idx - pad), idx + len(term) + pad))
+            start = idx + len(term)
+    spans.sort()
+    merged: list[tuple[int, int]] = []
+    for s, e in spans:
+        if merged and s <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], e))
+        else:
+            merged.append((s, e))
+    return merged
+
+
+def _marker_near_ai(text: str, low: str, markers: list[str], windows) -> str | None:
+    """Find a marker that occurs *within* an AI-mention window; return a snippet."""
     for m in markers:
-        idx = low.find(m)
-        if idx >= 0:
-            start = max(0, idx - 60)
-            snippet = text[start : idx + len(m) + 80].strip().replace("\n", " ")
-            return " ".join(snippet.split())
+        start = 0
+        while (idx := low.find(m, start)) >= 0:
+            if any(ws <= idx <= we for ws, we in windows):
+                snip = text[max(0, idx - 70) : idx + len(m) + 90].strip().replace("\n", " ")
+                return " ".join(snip.split())
+            start = idx + len(m)
     return None
 
 
 def classify(text: str) -> tuple[str, str | None]:
-    """Return (category, evidence_snippet) for a policy/contributing text body."""
+    """Return (category, evidence) — markers only count when near an AI mention.
+
+    Proximity matters: a bare "unless" in an unrelated docstring must not be read
+    as an AI condition. Priority: explicit allowance > ban > conditional > unclear.
+    """
     low = text.lower()
-    if not any(t in low for t in config.AI_TERMS):
+    windows = _ai_windows(low)
+    if not windows:
         return "none", None
-    # Priority: explicit allowance > explicit ban > conditional > unclear.
-    ev = _evidence(text, low, config.AI_ALLOW_MARKERS)
-    if ev:
-        return "allowed", ev
-    ev = _evidence(text, low, config.AI_BAN_MARKERS)
-    if ev:
-        return "banned", ev
-    ev = _evidence(text, low, config.AI_CONDITIONAL_MARKERS)
-    if ev:
-        return "conditional", ev
+    for cat, markers in (
+        ("allowed", config.AI_ALLOW_MARKERS),
+        ("banned", config.AI_BAN_MARKERS),
+        ("conditional", config.AI_CONDITIONAL_MARKERS),
+    ):
+        ev = _marker_near_ai(text, low, markers, windows)
+        if ev:
+            return cat, ev
     # AI is discussed but stance is unclear -> conditional, flag for manual review.
-    return "conditional", _evidence(text, low, config.AI_TERMS)
+    ws, we = windows[0]
+    return "conditional", " ".join(text[ws:we].strip().replace("\n", " ").split())[:180]
 
 
 def fetch_ai_policy(http: HttpClient, owner: str, name: str) -> dict:
-    """Locate and classify a repo's AI-contribution policy."""
-    # A dedicated policy file is the strongest signal; check those first.
+    """Locate and classify a repo's AI-contribution policy.
+
+    Reads *all* known policy files and concatenates them so a stub that merely
+    redirects (e.g. xarray's root AI_POLICY.md -> doc/contribute/ai-policy.md)
+    doesn't mask the real policy text. Falls back to CONTRIBUTING.
+    """
+    found_paths, texts = [], []
     for path in config.AI_POLICY_PATHS:
         text = _get_file(http, owner, name, path)
         if text:
-            category, ev = classify(text)
-            # A dedicated AI_POLICY file that we couldn't classify is still a real
-            # policy -> treat as conditional (verify), not "none".
-            if category == "none":
-                category = "conditional"
-            return {
-                "ai_policy": category,
-                "ai_policy_url": f"https://github.com/{owner}/{name}/blob/HEAD/{path}",
-                "ai_policy_evidence": ev or "AI policy file present; classify manually",
-            }
+            found_paths.append(path)
+            texts.append(text)
+    if texts:
+        category, ev = classify("\n\n".join(texts))
+        # A dedicated policy file always means a real stance exists; never "none".
+        if category == "none":
+            category = "conditional"
+        return {
+            "ai_policy": category,
+            "ai_policy_url": f"https://github.com/{owner}/{name}/blob/HEAD/{found_paths[0]}",
+            "ai_policy_evidence": ev or "AI policy file present; classify manually",
+        }
     # Otherwise scan CONTRIBUTING for an AI clause.
     for path in config.CONTRIBUTING_PATHS:
         text = _get_file(http, owner, name, path)
