@@ -11,6 +11,18 @@ def _fmt_int(v) -> str:
     return f"{v:,}" if isinstance(v, int) else "—"
 
 
+_AI_BADGE = {
+    "banned": "❌ banned",
+    "conditional": "⚠️ cond.",
+    "allowed": "✅ allowed",
+    "none": "❔ none",
+}
+
+
+def _ai_badge(policy) -> str:
+    return _AI_BADGE.get(policy or "none", "❔ none")
+
+
 def _release_age(card: Scorecard) -> str:
     raw = card.raw.last_release_at
     return raw[:10] if raw else "none"
@@ -27,19 +39,18 @@ def render_markdown(cards: list[Scorecard]) -> str:
 
     # Summary table.
     lines.append(
-        "| # | Repo | Composite | Usage | Maint | Recv | Downloads/mo | "
-        "GoodFirst | LastRelease | Contributing |"
+        "| # | Repo | AI policy | Composite | Usage | Maint | Recv | Downloads/mo | "
+        "GoodFirst | LastRelease |"
     )
-    lines.append("|--:|------|--:|--:|--:|--:|--:|--:|------|:--:|")
+    lines.append("|--:|------|:--:|--:|--:|--:|--:|--:|--:|------|")
     for i, c in enumerate(cards, 1):
         s = c.subscores
-        has = c.raw.has_contributing
-        contrib = "?" if has is None else ("✓" if has else "✗")
         lines.append(
             f"| {i} | [{c.candidate.github}](https://github.com/{c.candidate.github}) "
-            f"| {c.composite:.1f} | {s.usage:.0f} | {s.maintenance_need:.0f} | "
-            f"{s.receptiveness:.0f} | {_fmt_int(c.raw.monthly_downloads)} | "
-            f"{_fmt_int(c.raw.good_first_issues)} | {_release_age(c)} | {contrib} |"
+            f"| {_ai_badge(c.raw.ai_policy)} | {c.composite:.1f} | {s.usage:.0f} | "
+            f"{s.maintenance_need:.0f} | {s.receptiveness:.0f} | "
+            f"{_fmt_int(c.raw.monthly_downloads)} | "
+            f"{_fmt_int(c.raw.good_first_issues)} | {_release_age(c)} |"
         )
 
     # Per-repo detail.
@@ -68,6 +79,11 @@ def _detail_block(rank: int, c: Scorecard) -> list[str]:
         norm = c.normalized.get(_norm_key(key))
         norm_s = f"{norm:.3f}" if norm is not None else ""
         out.append(f"| {key} | {raw_map[key]} | {norm_s} |")
+    out.append(f"\n**AI policy: {_ai_badge(c.raw.ai_policy)}**")
+    if c.raw.ai_policy_url:
+        out.append(f"- policy: {c.raw.ai_policy_url}")
+    if c.raw.ai_policy_evidence:
+        out.append(f"- evidence: \"{c.raw.ai_policy_evidence}\"")
     if c.raw.devstats_url:
         out.append(f"\nEcosystem dashboard (if tracked): {c.raw.devstats_url}")
     if c.flags:

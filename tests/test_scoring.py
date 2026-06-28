@@ -37,6 +37,7 @@ def _full_raw(**over):
         pct_external_merged=0.4,
         median_response_days=2,
         merge_cadence=10,
+        ai_policy="allowed",
     )
     base.update(over)
     return RawSignals(**base)

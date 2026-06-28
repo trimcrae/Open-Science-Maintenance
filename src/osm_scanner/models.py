@@ -59,6 +59,12 @@ class RawSignals:
     median_response_days: float | None = None  # median time-to-first-response on recent PRs
     merge_cadence: float | None = None  # merges per month over the sampled window
 
+    # --- AI-contribution policy (gates the composite; see scoring) ---
+    # category: "banned" | "conditional" | "allowed" | "none" (heuristic — verify via url)
+    ai_policy: str | None = None
+    ai_policy_url: str | None = None
+    ai_policy_evidence: str | None = None
+
     # --- Context (not scored) ---
     ci_status: str | None = None  # "green" | "red" | "none"
     license: str | None = None

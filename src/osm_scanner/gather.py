@@ -5,8 +5,8 @@ from __future__ import annotations
 from . import config
 from .http import HttpClient
 from .models import Candidate, RawSignals
+from .sources import ai_policy, pypistats
 from .sources import github_rest as gh
-from .sources import pypistats
 
 
 def gather_signals(http: HttpClient, cand: Candidate) -> RawSignals:
@@ -44,6 +44,12 @@ def gather_signals(http: HttpClient, cand: Candidate) -> RawSignals:
     sig.pct_external_merged = pr_stats["pct_external_merged"]
     sig.median_response_days = pr_stats["median_response_days"]
     sig.merge_cadence = pr_stats["merge_cadence"]
+
+    # AI-contribution policy (gates the composite — the project's hard requirement).
+    policy = ai_policy.fetch_ai_policy(http, cand.owner, cand.name)
+    sig.ai_policy = policy["ai_policy"]
+    sig.ai_policy_url = policy["ai_policy_url"]
+    sig.ai_policy_evidence = policy["ai_policy_evidence"]
 
     # Context.
     sig.ci_status = gh.fetch_ci_status(http, cand.owner, cand.name, branch)

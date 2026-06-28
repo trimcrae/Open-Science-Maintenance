@@ -64,6 +64,76 @@ HELP_WANTED_LABELS = ["help wanted", "help-wanted", "contributions welcome"]
 # Keyword searches that signal LLM-doable compatibility/deprecation work.
 COMPAT_KEYWORDS = ['"numpy 2"', "deprecat", '"python 3.13"', '"python 3.12"']
 
+# --- AI-contribution policy detection ---
+# Where projects tend to put an AI policy, and the CONTRIBUTING files to scan.
+AI_POLICY_PATHS = [
+    "AI_POLICY.md",
+    ".github/AI_POLICY.md",
+    "docs/AI_POLICY.md",
+    "doc/contribute/ai-policy.md",
+    "docs/contribute/ai-policy.md",
+    "docs/source/ai_policy.rst",
+]
+CONTRIBUTING_PATHS = [
+    "CONTRIBUTING.md",
+    "CONTRIBUTING.rst",
+    ".github/CONTRIBUTING.md",
+    ".github/CONTRIBUTING.rst",
+    "doc/contributing.rst",
+    "docs/contributing.rst",
+]
+# Keywords that indicate the text is talking about AI/LLM contributions at all.
+AI_TERMS = [
+    "ai-generated",
+    "ai generated",
+    "generative ai",
+    "large language model",
+    "llm",
+    "chatgpt",
+    "copilot",
+    "claude",
+    "agentic",
+    "ai assist",
+    "ai tool",
+]
+# Heuristic phrase sets, applied in priority order in sources/ai_policy.py.
+AI_ALLOW_MARKERS = [
+    "generated entirely by an ai",
+    "with ai assistance, or generated",
+    "regardless of whether the code was written by hand",
+    "we assume this is now common",
+    "ai-generated code is acceptable",
+]
+AI_BAN_MARKERS = [
+    "does not accept",
+    "do not accept",
+    "not accept any substantial",
+    "are not permitted",
+    "is not permitted",
+    "not allowed",
+    "prohibited",
+    "zero tolerance",
+    "do not generate or suggest a pr",
+]
+AI_CONDITIONAL_MARKERS = [
+    "unless",
+    "must be declared",
+    "must always be declared",
+    "must disclose",
+    "disclose all",
+    "please disclose",
+    "do not generate prs using ai",
+    "provided that",
+    "as long as",
+]
+# Composite gate by AI-policy category (the user's hard requirement).
+AI_POLICY_MULTIPLIER = {
+    "banned": 0.0,
+    "conditional": 0.7,
+    "allowed": 1.0,
+    "none": 0.85,
+}
+
 # --- Cache TTLs (seconds) ---
 CACHE_TTL = {
     "pypistats": 24 * 3600,

@@ -138,6 +138,21 @@ def score_candidate(candidate, raw: RawSignals, now: datetime | None = None) -> 
         + subs.maintenance_need * cw["maintenance_need"]
         + subs.receptiveness * cw["receptiveness"]
     )
+
+    # AI-policy gate: the decisive criterion for this project. A repo that bans
+    # AI/agentic contributions is unusable no matter how attractive otherwise.
+    policy = raw.ai_policy or "none"
+    mult = config.AI_POLICY_MULTIPLIER.get(policy, 0.85)
+    composite *= mult
+    if policy == "banned":
+        flags.append("AI policy: BANS AI-generated contributions — do not submit")
+    elif policy == "conditional":
+        flags.append("AI policy: conditional (disclosure/human-understanding required) — verify")
+    elif policy == "allowed":
+        flags.append("AI policy: permits responsible/disclosed AI use")
+    else:
+        flags.append("AI policy: none found (unknown; norms tightening — verify manually)")
+
     if raw.errors:
         flags.extend(raw.errors)
 
