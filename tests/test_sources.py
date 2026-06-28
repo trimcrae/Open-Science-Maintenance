@@ -37,25 +37,11 @@ def test_repo_meta_and_release(tmp_path, repo_transport):
 
 
 def test_release_404_returns_none(tmp_path):
-    # No GitHub Release and no tags -> fetch_last_release returns None.
+    # No GitHub Release -> fetch_last_release returns None (no unreliable tag fallback).
     t = FakeTransport()
     t.add(path_is("/repos/acme/widget/releases/latest"), status=404, body={})
-    t.add(path_is("/repos/acme/widget/tags"), body=[])
     http = client(tmp_path, t)
     assert gh.fetch_last_release(http, "acme", "widget") is None
-
-
-def test_release_falls_back_to_tag_date(tmp_path):
-    # No GitHub Release, but a git tag exists -> use the tag commit's date.
-    t = FakeTransport()
-    t.add(path_is("/repos/acme/widget/releases/latest"), status=404, body={})
-    t.add(path_is("/repos/acme/widget/tags"), body=[{"name": "v1.2", "commit": {"sha": "abc"}}])
-    t.add(
-        path_is("/repos/acme/widget/commits/abc"),
-        body={"commit": {"committer": {"date": "2024-03-04T00:00:00Z"}}},
-    )
-    http = client(tmp_path, t)
-    assert gh.fetch_last_release(http, "acme", "widget") == "2024-03-04T00:00:00Z"
 
 
 def test_search_counts(tmp_path, repo_transport):

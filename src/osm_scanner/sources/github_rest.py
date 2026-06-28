@@ -51,31 +51,22 @@ def fetch_repo_meta(http: HttpClient, owner: str, name: str) -> dict:
 
 
 def fetch_last_release(http: HttpClient, owner: str, name: str) -> str | None:
+    """Date of the latest GitHub Release, or None.
+
+    Note: we deliberately do NOT fall back to ``/tags`` for the date — that
+    endpoint is not sorted newest-first, so the first tag is often the *oldest*
+    (e.g. biopython), which would badly overstate release age. Reliable
+    newest-tag resolution needs the GraphQL ``refs(orderBy: TAG_COMMIT_DATE)``
+    API (a planned Phase-4 source). Repos without GitHub Releases simply have
+    ``release_age`` dropped and the sub-score renormalized.
+    """
     try:
         body = _gh(http, f"/repos/{owner}/{name}/releases/latest")
         return _iso(body.get("published_at"))
     except HttpError as e:
-        if e.status != 404:
-            raise
-    # No GitHub Release; fall back to the most recent git tag's commit date.
-    return _latest_tag_date(http, owner, name)
-
-
-def _latest_tag_date(http: HttpClient, owner: str, name: str) -> str | None:
-    try:
-        tags = _gh(http, f"/repos/{owner}/{name}/tags", params={"per_page": "1"})
-    except HttpError:
-        return None
-    if not isinstance(tags, list) or not tags:
-        return None
-    sha = ((tags[0].get("commit") or {}).get("sha"))
-    if not sha:
-        return None
-    try:
-        commit = _gh(http, f"/repos/{owner}/{name}/commits/{sha}")
-    except HttpError:
-        return None
-    return _iso(((commit.get("commit") or {}).get("committer") or {}).get("date"))
+        if e.status == 404:
+            return None  # no published GitHub Release
+        raise
 
 
 # --- Issue / PR counts via the Search API --------------------------------------
