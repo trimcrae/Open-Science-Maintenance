@@ -39,6 +39,14 @@ def urllib_transport(method: str, url: str, headers: dict) -> tuple[int, dict, s
     except urllib.error.HTTPError as e:
         body = e.read().decode("utf-8", "replace") if e.fp else ""
         return e.code, dict(e.headers or {}), body
+    except urllib.error.URLError as e:
+        # Connection-level failure (DNS, TLS, or a proxy CONNECT denial). Map to an
+        # HTTP-like status so sources can degrade instead of the run aborting.
+        # A policy denial ("403"/"Tunnel connection failed") is not retryable -> 403;
+        # anything else is treated as transient -> 503 (the client will back off/retry).
+        msg = str(e.reason) if e.reason is not None else str(e)
+        status = 403 if ("403" in msg or "Tunnel connection failed" in msg) else 503
+        return status, {}, msg
 
 
 class HttpClient:

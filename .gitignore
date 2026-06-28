@@ -1,5 +1,9 @@
 # Scanner output and cache
 out/
+*.log
+
+# Cloned target repos (worked on under their own fork/PR flow)
+targets/
 
 # Python
 __pycache__/
