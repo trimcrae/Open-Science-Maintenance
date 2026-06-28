@@ -26,6 +26,18 @@ def test_classify_conditional_disclosure():
     assert classify(txt)[0] == "conditional"
 
 
+def test_classify_banned_via_rejection():
+    # Real biopython-style phrasing: AI tools named, PRs rejected.
+    txt = "Tackling these issues with AI tools defeats the purpose, and such PRs will be rejected."
+    assert classify(txt)[0] == "banned"
+
+
+def test_plural_llm_matches():
+    # "LLMs" (plural) must still register as an AI mention.
+    txt = "Please disclose any use of LLMs in your contribution."
+    assert classify(txt)[0] == "conditional"
+
+
 def test_classify_none_when_no_ai_terms():
     assert classify("Please run the tests and follow PEP 8.")[0] == "none"
 

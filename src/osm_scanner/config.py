@@ -87,6 +87,7 @@ AI_TERMS = [
     "ai-generated",
     "ai generated",
     "generative ai",
+    "generative tool",
     "large language model",
     "llm",
     "chatgpt",
@@ -114,6 +115,9 @@ AI_BAN_MARKERS = [
     "prohibited",
     "zero tolerance",
     "do not generate or suggest a pr",
+    "will be rejected",
+    "such prs will be rejected",
+    "will be closed",
 ]
 AI_CONDITIONAL_MARKERS = [
     "unless",

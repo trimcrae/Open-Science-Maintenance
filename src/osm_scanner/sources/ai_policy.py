@@ -19,11 +19,21 @@ verify before acting on it. Categories:
 from __future__ import annotations
 
 import base64
+import re
 
 from .. import config
 from ..http import HttpClient, HttpError
 
 API = "https://api.github.com"
+
+# AI terms matched on word boundaries (with optional trailing plural "s") so short
+# tokens (e.g. "llm", "ai") match "LLMs"/"AI" but not the insides of unrelated words
+# like "fulfillment" or "Hawaii". Longest alternatives first for readable matches.
+_AI_TERM_RE = re.compile(
+    r"\b(?:" + "|".join(re.escape(t) for t in sorted(config.AI_TERMS, key=len, reverse=True))
+    + r")s?\b",
+    re.IGNORECASE,
+)
 
 
 def _get_file(http: HttpClient, owner: str, name: str, path: str) -> str | None:
@@ -45,12 +55,7 @@ def _get_file(http: HttpClient, owner: str, name: str, path: str) -> str | None:
 
 def _ai_windows(low: str, pad: int = 280) -> list[tuple[int, int]]:
     """Character ranges around every AI-term mention, merged where they overlap."""
-    spans = []
-    for term in config.AI_TERMS:
-        start = 0
-        while (idx := low.find(term, start)) >= 0:
-            spans.append((max(0, idx - pad), idx + len(term) + pad))
-            start = idx + len(term)
+    spans = [(max(0, m.start() - pad), m.end() + pad) for m in _AI_TERM_RE.finditer(low)]
     spans.sort()
     merged: list[tuple[int, int]] = []
     for s, e in spans:
