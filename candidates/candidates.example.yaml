@@ -1,0 +1,9 @@
+# Minimal example. Each entry needs `github: owner/name`; `pypi` enables the
+# downloads signal; `domain` and `note` are free-text context.
+candidates:
+  - github: networkx/networkx
+    pypi: networkx
+    domain: scientific-python-core
+  - github: biopython/biopython
+    pypi: biopython
+    domain: bioinformatics

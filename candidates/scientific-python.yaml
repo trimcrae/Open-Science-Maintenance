@@ -1,0 +1,64 @@
+# Seed pool of widely-used scientific OSS to evaluate. The scanner ranks these
+# objectively — this list is the *input*, not the verdict. Bias is toward
+# mid-size ecosystem / affiliated packages that have real maintenance gaps AND a
+# maintainer who will actually merge an outside PR, over both untouchable core
+# (numpy/scipy) and abandoned orphans.
+candidates:
+  # --- Scientific Python core ---
+  - github: statsmodels/statsmodels
+    pypi: statsmodels
+    domain: scientific-python-core
+    note: large open-issue backlog, limited maintainer bandwidth
+  - github: networkx/networkx
+    pypi: networkx
+    domain: scientific-python-core
+    note: welcoming; lots of docs/typing surface
+  - github: scikit-image/scikit-image
+    pypi: scikit-image
+    domain: scientific-python-core
+    note: active, devstats-tracked, good-first-issue culture
+  - github: pydata/xarray
+    pypi: xarray
+    domain: scientific-python-core
+  - github: scikit-learn/scikit-learn
+    pypi: scikit-learn
+    domain: scientific-python-core
+    note: high bar; realistically typing/docs only
+
+  # --- Bioinformatics / computational biology ---
+  - github: biopython/biopython
+    pypi: biopython
+    domain: bioinformatics
+    note: huge user base, older codebase, modernization/compat opportunities
+  - github: scverse/scanpy
+    pypi: scanpy
+    domain: bioinformatics
+  - github: scverse/anndata
+    pypi: anndata
+    domain: bioinformatics
+  - github: MDAnalysis/mdanalysis
+    pypi: MDAnalysis
+    domain: bioinformatics
+  - github: scikit-bio/scikit-bio
+    pypi: scikit-bio
+    domain: bioinformatics
+  - github: pysam-developers/pysam
+    pypi: pysam
+    domain: bioinformatics
+
+  # --- Astronomy / astrophysics ---
+  - github: astropy/astropy
+    pypi: astropy
+    domain: astronomy
+  - github: sunpy/sunpy
+    pypi: sunpy
+    domain: astronomy
+  - github: astropy/astroquery
+    pypi: astroquery
+    domain: astronomy
+  - github: astropy/specutils
+    pypi: specutils
+    domain: astronomy
+  - github: lightkurve/lightkurve
+    pypi: lightkurve
+    domain: astronomy
