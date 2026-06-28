@@ -6,24 +6,24 @@ Survey of **34** widely-used scientific/numerical Python projects, generated on 
 
 | Stance | Projects |
 |--------|---------:|
-| ❌ Banned — AI/agentic contributions not accepted | 1 |
-| ⚠️ Conditional — allowed only with disclosure and/or human understanding | 5 |
+| ❌ Banned — AI/agentic contributions not accepted | 2 |
+| ⚠️ Conditional — allowed only with disclosure and/or human understanding | 4 |
 | ✅ Allowed — responsible, disclosed AI use permitted | 1 |
 | ❔ No stated policy (silent — not permission; norms are tightening) | 27 |
 
-**Bottom line:** 1 of 34 projects explicitly permit AI-generated contributions; 1 ban them outright. **None** were found to welcome *unreviewed, fully-autonomous* PRs — even the most permissive policies require a human who understands, reviews, and can explain every change, and who discloses tool use.
+**Bottom line:** 1 of 34 projects explicitly permit AI-generated contributions; 2 ban them outright. **None** were found to welcome *unreviewed, fully-autonomous* PRs — even the most permissive policies require a human who understands, reviews, and can explain every change, and who discloses tool use.
 
 ## ❌ Banned — AI/agentic contributions not accepted
 
+- **[biopython/biopython](https://github.com/biopython/biopython)** — [policy](https://github.com/biopython/biopython/blob/HEAD/CONTRIBUTING.rst)
+  - evidence: "hon). Tackling these with AI tools defeats that purpose, and such PRs will be rejected, and we will likely block repeat offenders. The `help wanted <https://github.com/biopyth"
 - **[MDAnalysis/mdanalysis](https://github.com/MDAnalysis/mdanalysis)** — [policy](https://github.com/MDAnalysis/mdanalysis/blob/HEAD/AI_POLICY.md)
   - evidence: "t to periodically review this policy. ## Policy overview MDAnalysis does not accept any substantial uses of AI-generated content in contributions. AI tools may be used in l"
 
 ## ⚠️ Conditional — allowed only with disclosure and/or human understanding
 
-- **[biopython/biopython](https://github.com/biopython/biopython)** — [policy](https://github.com/biopython/biopython/blob/HEAD/CONTRIBUTING.rst)
-  - evidence: "eit some are tedious), but we have chosen instead to use these as teachable moments to help potential new contributors get involved with a little mentoring as needed. This is with "
 - **[mne-tools/mne-python](https://github.com/mne-tools/mne-python)** — [policy](https://github.com/mne-tools/mne-python/blob/HEAD/CONTRIBUTING.md)
-  - evidence: ". Community Participation Guidelines ---------------------------------- Anyone participating in our online spaces is expected to follow our [Community Participation Guidelines and "
+  - evidence: "Policy on AI Assistance in Contributions ---------------------------------------- Contributing to MNE-Python requires human judgment, contextual understanding, domain knowledge, an"
 - **[networkx/networkx](https://github.com/networkx/networkx)** — [policy](https://github.com/networkx/networkx/blob/HEAD/CONTRIBUTING.rst)
   - evidence: "usage. 🔒 **Do not generate PRs using AI or LLM-based tools** unless: - You have **carefully read corresponding issues and relevant documentation**"
 - **[pyvista/pyvista](https://github.com/pyvista/pyvista)** — [policy](https://github.com/pyvista/pyvista/blob/HEAD/CONTRIBUTING.rst)

@@ -117,7 +117,6 @@ AI_BAN_MARKERS = [
     "do not generate or suggest a pr",
     "will be rejected",
     "such prs will be rejected",
-    "will be closed",
 ]
 AI_CONDITIONAL_MARKERS = [
     "unless",
